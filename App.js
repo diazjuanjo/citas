@@ -13,12 +13,13 @@ import Paciente from './src/components/Paciente';
 const App = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [pacientes, setPacientes] = useState([]);
+  const [paciente, setPaciente] = useState({});
 
-  console.log(modalVisible);
+  const pacienteEditar = id => {
+    const pacienteEditar = pacientes.filter(paciente => paciente.id === id);
 
-  // const nuevaCitaHandler = () => {
-  //   console.log('diste click...');
-  // };
+    setPaciente(pacienteEditar[0]);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -40,7 +41,13 @@ const App = () => {
           data={pacientes}
           keyExtractor={item => item.id}
           renderItem={({item}) => {
-            return <Paciente item={item} />;
+            return (
+              <Paciente
+                item={item}
+                setModalVisible={setModalVisible}
+                pacienteEditar={pacienteEditar}
+              />
+            );
           }}
         />
       )}
@@ -50,6 +57,8 @@ const App = () => {
         setModalVisible={setModalVisible}
         pacientes={pacientes}
         setPacientes={setPacientes}
+        paciente={paciente}
+        setPaciente={setPaciente}
       />
     </SafeAreaView>
   );

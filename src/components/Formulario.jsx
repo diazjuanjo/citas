@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Modal,
   Text,
@@ -16,7 +16,10 @@ const Formulario = ({
   setModalVisible,
   pacientes,
   setPacientes,
+  paciente: pacienteObj,
+  setPaciente: setPacienteApp,
 }) => {
+  const [id, setId] = useState('');
   const [paciente, setPaciente] = useState('');
   const [propietario, setPropietario] = useState('');
   const [email, setEmail] = useState('');
@@ -24,16 +27,26 @@ const Formulario = ({
   const [fecha, setFecha] = useState(new Date());
   const [sintomas, setSintomas] = useState('');
 
+  useEffect(() => {
+    if (Object.keys(pacienteObj).length > 0) {
+      setId(pacienteObj.id);
+      setPaciente(pacienteObj.paciente);
+      setPropietario(pacienteObj.propietario);
+      setEmail(pacienteObj.email);
+      setTelefono(pacienteObj.telefono);
+      setFecha(pacienteObj.fecha);
+      setSintomas(pacienteObj.sintomas);
+    }
+  }, []);
+
   const handleCita = () => {
     // Validar
     if ([paciente, propietario, email, fecha, sintomas].includes('')) {
       Alert.alert('Error', 'Todos los campos son obligatorios');
       return;
     }
-    console.log('agregando pacinete...');
 
     const nuevoPaciente = {
-      id: Date.now(),
       paciente,
       propietario,
       email,
@@ -41,9 +54,26 @@ const Formulario = ({
       fecha,
       sintomas,
     };
-    setPacientes([...pacientes, nuevoPaciente]);
+
+    if (id) {
+      //Editando
+      nuevoPaciente.id = id;
+
+      const pacientesActualizados = pacientes.map(pacienteState =>
+        pacienteState.id === nuevoPaciente.id ? nuevoPaciente : pacienteState,
+      );
+
+      setPacientes(pacientesActualizados);
+      setPacienteApp({});
+    } else {
+      //Nuevo Registro
+      nuevoPaciente.id = Date.now();
+      setPacientes([...pacientes, nuevoPaciente]);
+    }
+
     setModalVisible(!modalVisible);
 
+    setId('');
     setPaciente('');
     setPropietario('');
     setEmail('');
@@ -63,7 +93,17 @@ const Formulario = ({
 
           <Pressable
             style={styles.btnCancelar}
-            onLongPress={() => setModalVisible(!modalVisible)}>
+            onLongPress={() => {
+              setModalVisible(!modalVisible);
+              setPacienteApp({});
+              setId('');
+              setPaciente('');
+              setPropietario('');
+              setEmail('');
+              setTelefono('');
+              setFecha(new Date());
+              setSintomas('');
+            }}>
             <Text style={styles.btnCancelarTexto}>X Cancelar</Text>
           </Pressable>
 

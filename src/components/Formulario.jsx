@@ -13,7 +13,7 @@ import DatePicker from 'react-native-date-picker';
 
 const Formulario = ({
   modalVisible,
-  setModalVisible,
+  cerrarModal,
   pacientes,
   setPacientes,
   paciente: pacienteObj,
@@ -37,7 +37,7 @@ const Formulario = ({
       setFecha(pacienteObj.fecha);
       setSintomas(pacienteObj.sintomas);
     }
-  }, []);
+  }, [pacienteObj]);
 
   const handleCita = () => {
     // Validar
@@ -71,7 +71,7 @@ const Formulario = ({
       setPacientes([...pacientes, nuevoPaciente]);
     }
 
-    setModalVisible(!modalVisible);
+    cerrarModal();
 
     setId('');
     setPaciente('');
@@ -87,14 +87,14 @@ const Formulario = ({
       <SafeAreaView style={styles.contenido}>
         <ScrollView>
           <Text style={styles.titulo}>
-            Nueva {''}
+            {pacienteObj.id ? 'Editar' : 'Nueva'} {''}
             <Text style={styles.tituloBolt}>Cita</Text>
           </Text>
 
           <Pressable
             style={styles.btnCancelar}
             onLongPress={() => {
-              setModalVisible(!modalVisible);
+              cerrarModal();
               setPacienteApp({});
               setId('');
               setPaciente('');
@@ -171,7 +171,9 @@ const Formulario = ({
             />
           </View>
           <Pressable style={styles.btnNuevaCita} onPress={handleCita}>
-            <Text style={styles.btnNuevaCitaTexto}>Agregar Paciente</Text>
+            <Text style={styles.btnNuevaCitaTexto}>
+              {pacienteObj.id ? 'Editar' : 'Agregar'} Paciente
+            </Text>
           </Pressable>
         </ScrollView>
       </SafeAreaView>
